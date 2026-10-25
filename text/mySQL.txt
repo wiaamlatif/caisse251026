@@ -1,0 +1,86 @@
+SELECT
+      lignes_ticket.id_ligne_ticket,
+      lignes_ticket.`id_ticket`,
+      lignes_ticket.`indexRowTicket`,               
+      lignes_ticket.id_product,
+      lignes_ticket.quantity,     
+      products.price,
+      products.name_product,
+      categories.id_category,
+      categories.name_category,      
+      users.first_name,            
+      tickets.id_user,                                       
+      tickets.id_z,
+      lignes_ticket.`quantity` * products.price AS Montant,    
+      lignes_ticket.`created_at`
+FROM
+    `lignes_ticket`
+INNER JOIN tickets    ON lignes_ticket.id_ticket = tickets.id_ticket
+INNER JOIN users      ON users.id_user = tickets.id_user
+INNER JOIN products   ON products.id_product = lignes_ticket.id_product
+INNER JOIN categories ON categories.id_category = products.id_category
+WHERE tickets.id_z = 1  AND tickets.id_user = 1
+ORDER BY
+        tickets.id_z,
+        tickets.id_user,
+        categories.id_category,
+        lignes_ticket.id_product
+
+//=====================================================
+
+            SELECT
+                  SUM(lignes_ticket.`quantity` * products.price)  AS Montant                      
+            FROM
+                `lignes_ticket`
+            INNER JOIN tickets    ON lignes_ticket.id_ticket = tickets.id_ticket
+            INNER JOIN users      ON users.id_user = tickets.id_user
+            INNER JOIN products   ON products.id_product = lignes_ticket.id_product
+            INNER JOIN categories ON categories.id_category = products.id_category
+            WHERE tickets.id_z = 1 AND tickets.id_user =3 
+            ORDER BY
+                    tickets.id_z,
+                    tickets.id_user,
+                    categories.id_category,
+                    lignes_ticket.id_product;
+
+//===================================================
+
+UPDATE articles AS a
+JOIN produits AS p
+    ON a.id_product = p.id_product
+SET a.prix = p.prix;
+
+//=================================================
+
+UPDATE lineticketcheck AS t
+JOIN products AS p
+    ON t.id_product = p.id_product
+SET t.price = p.price;
+
+//================================================
+
+$id = mysqli_insert_id($conn);
+
+SHOW TABLE STATUS FROM ma_base
+WHERE Name = 'tickets';
+
+//============================================
+
+SELECT AUTO_INCREMENT
+FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = 'ma_base'
+  AND TABLE_NAME = 'tickets';
+//===========================================
+
+$sql = "SELECT AUTO_INCREMENT
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = 'ma_base'
+        AND TABLE_NAME = 'tickets'";
+
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+
+$nextId = $row['AUTO_INCREMENT'];
+
+echo $nextId;
+
